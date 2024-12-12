@@ -26,6 +26,7 @@ async function run() {
     const userCollection = client.db("KanjiKidz").collection("users");
     const lessonCollection = client.db("KanjiKidz").collection("lessons");
     const vocabularyCollection = client.db("KanjiKidz").collection("vocabularies");
+    const tutorialCollection = client.db("KanjiKidz").collection("tutorials")
 
     app.post('/post_user', async (req, res) => {
       const user = req?.body;
@@ -171,6 +172,11 @@ async function run() {
       const filter = {lessonNo : lesson?.lessonNumber};
       const vocabularies = await vocabularyCollection.find(filter).toArray();
       res.send({lesson, vocabularies});
+    })
+
+    app.get('/all_tutorials', async(req, res) => {
+      const result = await tutorialCollection.find().toArray();
+      res.send(result);
     })
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
