@@ -112,6 +112,33 @@ async function run() {
       const result = await vocabularyCollection.insertOne(vocabulary);
       res.send(result);
     })
+
+    app.get('/all_vocabularies', async(req, res) => {
+      const result = await vocabularyCollection.find().toArray();
+      res.send(result);
+    })
+
+    app.get('/selected_vocabulary/:id', async(req, res) => {
+      const id = req?.params?.id;
+      const query = {_id : new ObjectId(id)};
+      const result = await vocabularyCollection.findOne(query);
+      res.send(result);
+    })
+
+    app.patch('/update_vocabulary/:id', async(req, res) => {
+      const id = req?.params?.id;
+      const vocabulary = req?.body;
+      const filter = {_id : new ObjectId(id)};
+      const options = {upsert : true};
+      const updatedDoc = {
+        $set: {
+          ...vocabulary
+        }
+      }
+
+      const result = await vocabularyCollection.updateOne(filter, updatedDoc, options);
+      res.send(result);
+    })
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
 
