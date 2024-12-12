@@ -163,6 +163,15 @@ async function run() {
       const result = await vocabularyCollection.deleteOne(query);
       res.send(result);
     })
+
+    app.get('/lesson_details/:id', async(req, res) => {
+      const id = req?.params?.id;
+      const query = {_id : new ObjectId(id)};
+      const lesson = await lessonCollection.findOne(query);
+      const filter = {lessonNo : lesson?.lessonNumber};
+      const vocabularies = await vocabularyCollection.find(filter).toArray();
+      res.send({lesson, vocabularies});
+    })
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
 
