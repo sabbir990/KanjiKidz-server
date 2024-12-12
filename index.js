@@ -22,7 +22,9 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
+    
     const userCollection = client.db("KanjiKidz").collection("users");
+    const lessonCollection = client.db("KanjiKidz").collection("lessons");
 
     app.post('/post_user', async (req, res) => {
       const user = req?.body;
@@ -61,6 +63,39 @@ async function run() {
       }
 
       const result = await userCollection.updateOne(filter, updateDoc, options)
+      res.send(result);
+    })
+
+    app.post('/add_lesson', async(req, res) => {
+      const lesson = req?.body;
+      const result = await lessonCollection.insertOne(lesson);
+      res.send(result);
+    } )
+
+    app.get('/all_lessons', async(req, res) => {
+      const result = await lessonCollection.find().toArray();
+      res.send(result);
+    })
+
+    app.get('/single_lesson/:id', async(req, res) => {
+      const id = req?.params?.id;
+      const query = {_id : new ObjectId(id)};
+      const result = await lessonCollection.findOne(query);
+      res.send(result);
+    })
+
+    app.patch('/update_lesson/:id', async(req, res) => {
+      const id = req?.params?.id;
+      const lesson = req?.body;
+      const filter = {_id : new ObjectId(id)};
+      const options = {upsert : true};
+      const updatedDoc = {
+        $set : {
+          ...lesson
+        }
+      }
+
+      const result = await lessonCollection.updateOne(filter, updatedDoc, options);
       res.send(result);
     })
     // Send a ping to confirm a successful connection
