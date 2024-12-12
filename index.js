@@ -25,16 +25,23 @@ async function run() {
     const userCollection = client.db("KanjiKidz").collection("users");
 
     app.post('/post_user', async (req, res) => {
-        const user = req?.body;
-        const query = {email : user?.email};
-        const isExists = await userCollection.findOne(query);
+      const user = req?.body;
+      const query = { email: user?.email };
+      const isExists = await userCollection.findOne(query);
 
-        if(isExists){
-            return res.send(isExists);
-        }
+      if (isExists) {
+        return res.send(isExists);
+      }
 
-        const result = await userCollection.insertOne(user);
-        res.send(result)
+      const result = await userCollection.insertOne(user);
+      res.send(result)
+    })
+
+    app.get('/my_data/:email', async(req, res) => {
+      const email = req?.params?.email;
+      const query = {email : email};
+      const result = await userCollection.findOne(query);
+      res.send(result);
     })
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
@@ -49,9 +56,9 @@ run().catch(console.dir);
 
 
 app.get('/', (req, res) => {
-    res.send("This is a task from my sensei and the best learning platform of my life Programming Hero")
+  res.send("This is a task from my sensei and the best learning platform of my life Programming Hero")
 })
 
 app.listen(PORT, () => {
-    console.log(`This server is running in port ${PORT}`)
+  console.log(`This server is running in port ${PORT}`)
 })
