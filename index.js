@@ -25,6 +25,7 @@ async function run() {
     
     const userCollection = client.db("KanjiKidz").collection("users");
     const lessonCollection = client.db("KanjiKidz").collection("lessons");
+    const vocabularyCollection = client.db("KanjiKidz").collection("vocabularies");
 
     app.post('/post_user', async (req, res) => {
       const user = req?.body;
@@ -103,6 +104,12 @@ async function run() {
       const id = req?.params?.id;
       const query = {_id : new ObjectId(id)};
       const result = await lessonCollection.deleteOne(query);
+      res.send(result);
+    })
+
+    app.post('/add_vocabulary', async(req, res) => {
+      const vocabulary = req?.body;
+      const result = await vocabularyCollection.insertOne(vocabulary);
       res.send(result);
     })
     // Send a ping to confirm a successful connection
