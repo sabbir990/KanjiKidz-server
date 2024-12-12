@@ -109,7 +109,15 @@ async function run() {
 
     app.post('/add_vocabulary', async(req, res) => {
       const vocabulary = req?.body;
+      const filter = {lessonNumber : vocabulary?.lessonNo};
+      const lesson = await lessonCollection.findOne(filter);
+      const updateDoc = {
+        $set :{
+          vocabularyCount : lesson?.vocabularyCount + 1
+        }
+      }
       const result = await vocabularyCollection.insertOne(vocabulary);
+      await lessonCollection.updateOne(filter, updateDoc)
       res.send(result);
     })
 
@@ -143,6 +151,15 @@ async function run() {
     app.delete('/delete_vocabulary/:id', async(req, res) => {
       const id = req?.params?.id;
       const query = {_id : new ObjectId(id)};
+      const vocabulary = await vocabularyCollection.findOne(query);
+      const filter = {lessonNumber : vocabulary?.lessonNo};
+      const lesson = await lessonCollection.findOne(filter);
+      const updatedDoc = {
+        $set : {
+          vocabularyCount : lesson?.vocabularyCount - 1
+        }
+      }
+      await lessonCollection.updateOne(filter, updatedDoc);
       const result = await vocabularyCollection.deleteOne(query);
       res.send(result);
     })
