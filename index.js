@@ -3,7 +3,7 @@ const app = express();
 const PORT = process.env.PORT || 8000;
 const cors = require("cors")
 require('dotenv').config();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.p2btb5w.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 app.use(express.json());
@@ -41,6 +41,26 @@ async function run() {
       const email = req?.params?.email;
       const query = {email : email};
       const result = await userCollection.findOne(query);
+      res.send(result);
+    })
+
+    app.get('/all_users', async(req, res) => {
+      const result = await userCollection.find().toArray();
+      res.send(result);
+    })
+
+    app.patch('/update_role/:id', async(req, res) => {
+      const id = req?.params?.id;
+      const role = req?.body;
+      const filter = {_id : new ObjectId(id)};
+      const options = {upsert : true};
+      const updateDoc = {
+        $set : {
+          role : role?.role
+        }
+      }
+
+      const result = await userCollection.updateOne(filter, updateDoc, options)
       res.send(result);
     })
     // Send a ping to confirm a successful connection
