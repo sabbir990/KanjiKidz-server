@@ -7,7 +7,11 @@ const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.p2btb5w.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 app.use(express.json());
-app.use(cors())
+const corsOptions = {
+  origin: ['http://localhost:5173', 'http://localhost:5174', "https://kanjikidz.web.app", "https://kanjikidz.firebaseapp.com/"], // Allowed URLs
+};
+
+app.use(cors(corsOptions))
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -21,7 +25,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
     
     const userCollection = client.db("KanjiKidz").collection("users");
     const lessonCollection = client.db("KanjiKidz").collection("lessons");
